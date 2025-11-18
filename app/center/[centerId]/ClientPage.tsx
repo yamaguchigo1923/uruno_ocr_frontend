@@ -27,6 +27,9 @@ type OrderResponse = {
   flags: FlagsEntry[];
   ocr_snapshot_url?: string | null;
   output_spreadsheet_url?: string | null;
+  output_folder_id?: string | null;
+  extraction_sheet_id?: string | null;
+  extraction_sheet_url?: string | null;
   center_name: string;
   center_month: string;
   debug_logs: string[];
@@ -344,6 +347,8 @@ export default function CenterClient({ centerId }: CenterClientProps) {
         maker_data: response.maker_data,
         maker_cds: response.maker_cds,
         flags: response.flags,
+        extraction_sheet_id: response.extraction_sheet_id,
+        output_folder_id: response.output_folder_id,
       });
       const res = await fetch(buildApiUrl("/orders/export/stream"), {
         method: "POST",
