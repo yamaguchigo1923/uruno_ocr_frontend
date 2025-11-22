@@ -32,5 +32,5 @@ jobs:
       with: 
         app-name: 'uruno-ocr-frontend-webapp'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_6e581b211f2149559ce20e58a4d7747d }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: .
