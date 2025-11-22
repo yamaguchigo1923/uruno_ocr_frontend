@@ -5,7 +5,11 @@ import { buildApiUrl } from "@/lib/api";
 
 type TableData = string[][];
 
-type FlagsEntry = [string, string, string, string];
+// [依頼先, メーカー, 商品CD, 成分表, 見本]
+type FlagsEntry = [string, string, string, string, string];
+
+// [依頼先, メーカー, 商品CD, 番号, 成分表, 見本]
+type FlagsWithNumberEntry = [string, string, string, string, string, string];
 
 type MakerData = Record<string, TableData>;
 
@@ -25,6 +29,7 @@ type OrderResponse = {
   maker_data: MakerData;
   maker_cds: MakerCodes;
   flags: FlagsEntry[];
+  flags_with_number?: FlagsWithNumberEntry[];
   ocr_snapshot_url?: string | null;
   output_spreadsheet_url?: string | null;
   output_folder_id?: string | null;
@@ -85,8 +90,10 @@ function DataTable({ rows }: { rows: TableData | null }) {
 function CalcResultTable({ response }: { response: OrderResponse | null }) {
   if (!response) return null;
   const header = [
+    "依頼先",
     "メーカー",
     "商品CD",
+    "番号",
     "メーカー(結果)",
     "商品名",
     "規格",
@@ -95,21 +102,45 @@ function CalcResultTable({ response }: { response: OrderResponse | null }) {
     "備考",
   ];
   const rows: TableData = [header];
-  const flagsMap = new Map<string, { seibun: string; mihon: string }>();
-  response.flags.forEach(([maker, code, seibunFlag, mihonFlag]) => {
-    flagsMap.set(`${maker}__${code}`, { seibun: seibunFlag, mihon: mihonFlag });
-  });
+  const flagsMap = new Map<
+    string,
+    { dest: string; seibun: string; mihon: string; num?: string }
+  >();
+  if (
+    Array.isArray(response.flags_with_number) &&
+    response.flags_with_number.length > 0
+  ) {
+    response.flags_with_number.forEach(
+      ([dest, maker, code, num, seibunFlag, mihonFlag]) => {
+        flagsMap.set(`${maker}__${code}`, {
+          dest,
+          seibun: seibunFlag,
+          mihon: mihonFlag,
+          num,
+        });
+      }
+    );
+  } else {
+    response.flags.forEach(([dest, maker, code, seibunFlag, mihonFlag]) => {
+      flagsMap.set(`${maker}__${code}`, {
+        dest,
+        seibun: seibunFlag,
+        mihon: mihonFlag,
+      });
+    });
+  }
   Object.entries(response.maker_cds).forEach(([maker, codes]) => {
     const dataRows = response.maker_data[maker] ?? [];
     codes.forEach((code, index) => {
       const row = dataRows[index] ?? [maker, "", "", ""];
-      const flags = flagsMap.get(`${maker}__${code}`) ?? {
-        seibun: "",
-        mihon: "",
-      };
+      const flags =
+        flagsMap.get(`${maker}__${code}`) ??
+        ({ dest: "", seibun: "", mihon: "" } as const);
       rows.push([
+        flags.dest ?? "",
         maker,
         code,
+        flags.num ?? "",
         row[0] ?? maker,
         row[1] ?? "",
         row[2] ?? "",
