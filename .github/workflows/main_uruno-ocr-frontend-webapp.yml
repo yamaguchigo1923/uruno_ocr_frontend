@@ -1,4 +1,4 @@
-name: 'Build and deploy Node.js app to Azure Web App: uruno-ocr-frontend-webapp'
+name: "Build and deploy Node.js app to Azure Web App: uruno-ocr-frontend-webapp"
 
 on:
   push:
@@ -16,10 +16,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Build Next.js app
         run: npm run build
@@ -32,7 +32,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'uruno-ocr-frontend-webapp'
-          slot-name: 'production'
+          app-name: "uruno-ocr-frontend-webapp"
+          slot-name: "production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6E581B211F2149559CE20E58A4D7747D }}
           package: next.zip
