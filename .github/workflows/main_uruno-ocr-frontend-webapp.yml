@@ -24,7 +24,7 @@ jobs:
       - name: Build Next.js app
         run: npm run build
 
-      # ★ここがポイント：.next を明示的に含めて zip を作る
+      # .next を含めた zip を作成
       - name: Create deploy artifact (include .next)
         run: |
           zip next.zip ./* .next -qr
@@ -34,5 +34,5 @@ jobs:
         with:
           app-name: 'uruno-ocr-frontend-webapp'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_6e581b211f2149559ce20e58a4d7747d }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6E581B211F2149559CE20E58A4D7747D }}
           package: next.zip
