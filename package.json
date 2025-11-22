@@ -5,7 +5,6 @@
   "engines": {
     "node": ">=20.9.0"
   },
-  "export": "next export",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
