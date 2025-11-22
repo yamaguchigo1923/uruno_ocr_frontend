@@ -133,9 +133,12 @@ function CalcResultTable({ response }: { response: OrderResponse | null }) {
     const dataRows = response.maker_data[maker] ?? [];
     codes.forEach((code, index) => {
       const row = dataRows[index] ?? [maker, "", "", ""];
-      const flags =
-        flagsMap.get(`${maker}__${code}`) ??
-        ({ dest: "", seibun: "", mihon: "" } as const);
+      const flags = flagsMap.get(`${maker}__${code}`) ?? {
+        dest: "",
+        seibun: "",
+        mihon: "",
+        num: "",
+      };
       rows.push([
         flags.dest ?? "",
         maker,
